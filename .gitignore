@@ -1,0 +1,35 @@
+# Arduino IDE
+*.ino.bin
+*.ino.elf
+*.ino.hex
+*.ino.map
+
+# ESP-IDF
+sdkconfig
+sdkconfig.old
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+.Thumbs.db
+.directory
+
+# Output/lixo
+bin/
+out/
+build/
+*.exe
+
+# Env.Variables + Segredo
+*.env
+*password*
+**/secrets.h
+**/config.h
+**/credentials.h
+
+# Logs & tmp
+*.log
+*.tmp
+*.swp
