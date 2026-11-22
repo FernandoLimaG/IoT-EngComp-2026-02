@@ -17,7 +17,8 @@ sdkconfig.old
 .directory
 
 # Output/lixo
-bin/
+**/bin/*
+!**/bin/.gitkeep
 out/
 build/
 *.exe
