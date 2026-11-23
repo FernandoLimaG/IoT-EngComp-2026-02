@@ -1,27 +1,124 @@
 \documentclass[12pt,a4paper,titlepage]{article}
 
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{titlesec}
 \usepackage{graphicx}
-\graphicspath{ {img/} }
+\usepackage{titlesec}
+\usepackage[portuguese]{babel}
+\usepackage[colorlinks=true,allcolors=black]{hyperref}
 
-\author{
-    Fernando de Lima Gonçalves \\
-    Fernando Pinto de Queiroz \\
-    Henrique Augusto Figueiredo Feydit Vieira \\
-    Isabela de Oliveira Miranda \\
-    Laura Martins de Souza \\
-    Pedro de Castro Dutra Flores
-}
+\graphicspath{ {./img/}{./../../../../../../} }
 
 \title{TP3 - Protocolo MQTT}
-
+\author{
+    \includegraphics[scale=0.85]{puc.png}
+    \\[1.5em]
+    \\Fernando de Lima Gonçalves
+    \\Fernando Pinto de Queiroz
+    \\Henrique Augusto Figueiredo Feydit Vieira
+    \\Isabela de Oliveira Miranda
+    \\Laura Martins de Souza
+    \\Pedro de Castro Dutra Flores
+}
 \date{Belo Horizonte \\ 2026}
 
 \begin{document}
-
 \maketitle
+\tableofcontents
 
-%\includegraphics[width=\textwidth]{mqtt_sensores_temperatura.jpg}
-%\includegraphics[width=\textwidth]{subs_sensores_temperatura.jpg}
-\includegraphics[width=\textwidth]{mqtt_sensores_a1_temperatura.jpg}
+\clearpage\section{Objetivo}
+Simular aquisição de dados e controle de sistema por meio remoto, utilizando protocolo MQTT e organização de 
+diferentes áreas, sensores e atuadores por meio do conceito de tópicos.
+
+\section{Publishers e Subscriber}
+Trabalho foi desenvolvido seguindo orientação disponibilizada na apostila referência de trabalhos e os tópicos seguem formato:
+
+\begin{center}
+    \fbox{area/\textit{id}/\textit{tipo}/\textit{objeto ou fenômeno ou grandeza medida}}
+\end{center}
+onde \texttt{id,tipo,objeto ou fenômeno ou grandeza} podem ser:
+
+\begin{itemize}
+    \item \textbf{ID:} Valor numérico identificando as diferentes áreas 1, 2 ou 3.
+    \item \textbf{Tipo:} Palavra identificando dispositivo como sensor, atuador ou alerta.
+    \item \textbf{Objeto, fenômeno ou grandeza:} Palavra identificativa com valor definido em:
+        \begin{itemize} 
+            \item \textbf{Sensores:} temperatura ou gases.
+            \item \textbf{Atuadores:} rele.
+        \end{itemize} 
+\end{itemize}
+
+\clearpage\section{Imagens}
+
+% Publishers
+
+\begin{figure}[H]
+    \centering
+    \caption{Publisher - Alertas}
+    \includegraphics[width=0.85\textwidth]{mqtt_alertas.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:pub_alertas}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Publisher - Atuadores Relé}
+    \includegraphics[width=0.85\textwidth]{mqtt_atuadores_rele.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:pub_rele}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Publisher - Sensores de Gases}
+    \includegraphics[width=0.85\textwidth]{mqtt_sensores_gases.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:pub_gases}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Publisher - Sensores de Temperatura}
+    \includegraphics[width=0.85\textwidth]{mqtt_sensores_temperatura.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:pub_temp}
+\end{figure}
+
+\clearpage
+
+% Subscribers
+
+\begin{figure}[H]
+    \centering
+    \caption{Subscriber - Alertas}
+    \includegraphics[width=0.85\textwidth]{subs_alertas.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:sub_alertas}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Subscriber - Atuadores Relé}
+    \includegraphics[width=0.85\textwidth]{subs_atuadores_rele.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:sub_rele}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Subscriber - Sensores de Gases}
+    \includegraphics[width=0.85\textwidth]{subs_sensores_gases.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:sub_gases}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \caption{Subscriber - Sensores de Temperatura}
+    \includegraphics[width=0.85\textwidth]{subs_sensores_temperatura.jpg}
+    \par{\small Fonte: Grupo IoT (2026)}
+    \label{fig:sub_temp}
+\end{figure}
 
 \end{document}
