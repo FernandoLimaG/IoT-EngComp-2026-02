@@ -12,11 +12,11 @@
 \PYG{c+cp}{\PYGZsh{}define ID\PYGZus{}MQTT  \PYGZdq{}IoT\PYGZus{}PUC\PYGZus{}eng\PYGZus{}comp\PYGZus{}mqtt\PYGZdq{}}
 
 \PYG{c+c1}{// Global var}
-\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{PIN\PYGZus{}LED}\PYG{+w}{ }\PYG{l+m+mi}{25}\PYG{p}{;}
-\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}test.mosquitto.org\PYGZdq{}}\PYG{p}{;}
-\PYG{c+c1}{//const char* BROKER\PYGZus{}MQTT = \PYGZdq{}broker.emqx.io\PYGZdq{};   // broker secundario caso mosquitto down}
-\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1883}\PYG{p}{;}
 \PYG{k+kr}{long}\PYG{+w}{ }\PYG{n}{numAleatorio}\PYG{p}{;}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{PIN\PYGZus{}LED}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{25}\PYG{p}{;}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1883}\PYG{p}{;}
+\PYG{c+c1}{//const char* BROKER\PYGZus{}MQTT = \PYGZdq{}test.mosquitto.org\PYGZdq{};}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}broker.emqx.io\PYGZdq{}}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// broker se mosquitto down}
 
 \PYG{c+c1}{// Global objetos MQTT}
 \PYG{n+nf}{WiFiClient}\PYG{+w}{ }\PYG{n}{espClient}\PYG{p}{;}
@@ -44,15 +44,13 @@
 
 \PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{initMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
 \PYG{p}{\PYGZob{}}
-\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setServer}\PYG{p}{(}\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{p}{);}\PYG{+w}{   }\PYG{c+c1}{//informa qual broker e porta deve ser conectado}
-\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setCallback}\PYG{p}{(}\PYG{n}{mqtt\PYGZus{}callback}\PYG{p}{);}\PYG{+w}{            }\PYG{c+c1}{//atribui função de callback}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setServer}\PYG{p}{(}\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setCallback}\PYG{p}{(}\PYG{n}{mqtt\PYGZus{}callback}\PYG{p}{);}
 \PYG{p}{\PYGZcb{}}
 
 \PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{mqtt\PYGZus{}callback}\PYG{p}{(}\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{topic}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{byte}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{payload}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{unsigned}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{)}
 \PYG{p}{\PYGZob{}}
 \PYG{+w}{  }\PYG{k+kr}{String}\PYG{+w}{ }\PYG{n}{msg}\PYG{p}{;}
-
-\PYG{+w}{  }\PYG{c+cm}{/* obtem a string do payload recebido */}
 \PYG{+w}{  }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}
 \PYG{+w}{  }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{k+kr}{char}\PYG{+w}{ }\PYG{n}{c}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kr}{char}\PYG{p}{)}\PYG{n}{payload}\PYG{p}{[}\PYG{n}{i}\PYG{p}{];}
@@ -62,17 +60,15 @@
 \PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}String via MQTT: \PYGZdq{}}\PYG{p}{);}
 \PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n}{msg}\PYG{p}{);}
 
-\PYG{+w}{  }\PYG{k}{if}\PYG{p}{(}\PYG{n}{msg}\PYG{p}{.}\PYG{n}{equals}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}L\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{k}{if}\PYG{p}{(}\PYG{n}{msg}\PYG{p}{.}\PYG{n}{equals}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}L\PYGZdq{}}\PYG{p}{))}
 \PYG{+w}{  }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
-\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{k+kr}{LED\PYGZus{}BUILTIN}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LED aceso mediante comando MQTT\PYGZdq{}}\PYG{p}{);}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}
 \PYG{+w}{  }
 \PYG{+w}{  }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{msg}\PYG{p}{.}\PYG{n}{equals}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}D\PYGZdq{}}\PYG{p}{))}
 \PYG{+w}{  }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{LOW}\PYG{p}{);}
-\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{k+kr}{LED\PYGZus{}BUILTIN}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{LOW}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LED apagado mediante comando MQTT\PYGZdq{}}\PYG{p}{);}
 \PYG{+w}{  }\PYG{p}{\PYGZcb{}}
 
@@ -129,13 +125,13 @@
 \PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n+nf}{WiFi}\PYG{p}{.}\PYG{n+nf}{localIP}\PYG{p}{());}
 \PYG{p}{\PYGZcb{}}
 
-\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{setup}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{setup}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
 \PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{begin}\PYG{p}{(}\PYG{l+m+mi}{9600}\PYG{p}{);}
 \PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
 \PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{Disciplina IoT: acesso a nuvem via ESP32\PYGZdq{}}\PYG{p}{);}
 \PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
 
-\PYG{+w}{  }\PYG{c+c1}{// programa LED interno como saida}
 \PYG{+w}{  }\PYG{n+nf}{pinMode}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{OUTPUT}\PYG{p}{);}
 
 \PYG{+w}{  }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
@@ -149,7 +145,8 @@
 \PYG{+w}{  }\PYG{n}{initMQTT}\PYG{p}{();}
 \PYG{p}{\PYGZcb{}}
 
-\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{loop}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{loop}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
 \PYG{+w}{  }\PYG{k+kr}{char}\PYG{+w}{ }\PYG{n}{temperatura\PYGZus{}str}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{l+m+mi}{0}\PYG{p}{\PYGZcb{};}
 \PYG{+w}{  }
 \PYG{+w}{  }\PYG{n}{VerificaConexoesWiFIeMQTT}\PYG{p}{();}

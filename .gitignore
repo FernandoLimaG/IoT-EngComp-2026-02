@@ -34,3 +34,11 @@ build/
 *.log
 *.tmp
 *.swp
+
+# Latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc

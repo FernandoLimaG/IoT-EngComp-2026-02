@@ -2,7 +2,7 @@
 \PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{paho.mqtt.client}\PYG{+w}{ }\PYG{k}{as}\PYG{+w}{ }\PYG{n+nn}{mqtt}
 \PYG{k+kn}{import}\PYG{+w}{ }\PYG{n+nn}{mysql.connector}
 
-\PYG{n}{con} \PYG{o}{=} \PYG{n}{mysql}\PYG{o}{.}\PYG{n}{connector}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{n}{host}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{,} \PYG{n}{database}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}IoT\PYGZsq{}}\PYG{p}{,} \PYG{n}{user}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}root\PYGZsq{}}\PYG{p}{,} \PYG{n}{password}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}BrCon2657\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{con} \PYG{o}{=} \PYG{n}{mysql}\PYG{o}{.}\PYG{n}{connector}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{n}{host}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{,} \PYG{n}{database}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}IoT\PYGZsq{}}\PYG{p}{,} \PYG{n}{user}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}root\PYGZsq{}}\PYG{p}{,} \PYG{n}{password}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}MySQL@123\PYGZsq{}}\PYG{p}{)}
 
 \PYG{k}{if} \PYG{n}{con}\PYG{o}{.}\PYG{n}{is\PYGZus{}connected}\PYG{p}{():}
     \PYG{n}{db\PYGZus{}info} \PYG{o}{=} \PYG{n}{con}\PYG{o}{.}\PYG{n}{get\PYGZus{}server\PYGZus{}info}\PYG{p}{()}
@@ -57,6 +57,7 @@
     \PYG{n}{client}\PYG{o}{.}\PYG{n}{on\PYGZus{}connect} \PYG{o}{=} \PYG{n}{on\PYGZus{}connect}
     \PYG{n}{client}\PYG{o}{.}\PYG{n}{on\PYGZus{}message} \PYG{o}{=} \PYG{n}{on\PYGZus{}message}
 
-    \PYG{n}{client}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}test.mosquitto.org\PYGZdq{}}\PYG{p}{,} \PYG{l+m+mi}{1883}\PYG{p}{,} \PYG{l+m+mi}{60}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{}client.connect(\PYGZdq{}test.mosquitto.org\PYGZdq{}, 1883, 60)}
+    \PYG{n}{client}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}broker.emqx.io\PYGZdq{}}\PYG{p}{,} \PYG{l+m+mi}{1883}\PYG{p}{,} \PYG{l+m+mi}{60}\PYG{p}{)}
     \PYG{n}{client}\PYG{o}{.}\PYG{n}{loop\PYGZus{}forever}\PYG{p}{()}
 \end{MintedVerbatim}
