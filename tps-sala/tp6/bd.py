@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import mysql.connector
 
-con = mysql.connector.connect(host='localhost', database='IoT', user='root', password='BrCon2657')
+con = mysql.connector.connect(host='localhost', database='IoT', user='root', password='MySQL@123')
 
 if con.is_connected():
     db_info = con.get_server_info()
@@ -56,5 +56,6 @@ if __name__ == '__main__':
     client.on_connect = on_connect
     client.on_message = on_message
 
-    client.connect("test.mosquitto.org", 1883, 60)
+    #client.connect("test.mosquitto.org", 1883, 60)
+    client.connect("broker.emqx.io", 1883, 60)
     client.loop_forever()

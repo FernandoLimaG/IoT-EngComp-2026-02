@@ -11,11 +11,11 @@
 #define ID_MQTT  "IoT_PUC_eng_comp_mqtt"
 
 // Global var
-const int PIN_LED 25;
-const char* BROKER_MQTT = "test.mosquitto.org";
-//const char* BROKER_MQTT = "broker.emqx.io";   // broker secundario caso mosquitto down
-const int BROKER_PORT = 1883;
 long numAleatorio;
+const int PIN_LED = 25;
+const int BROKER_PORT = 1883;
+//const char* BROKER_MQTT = "test.mosquitto.org";
+const char* BROKER_MQTT = "broker.emqx.io";   // broker se mosquitto down
 
 // Global objetos MQTT
 WiFiClient espClient;
@@ -43,15 +43,13 @@ void initWiFi(void)
 
 void initMQTT(void)
 {
-  MQTT.setServer(BROKER_MQTT, BROKER_PORT);   //informa qual broker e porta deve ser conectado
-  MQTT.setCallback(mqtt_callback);            //atribui função de callback
+  MQTT.setServer(BROKER_MQTT, BROKER_PORT);
+  MQTT.setCallback(mqtt_callback);
 }
 
 void mqtt_callback(char* topic, byte* payload, unsigned int length)
 {
   String msg;
-
-  /* obtem a string do payload recebido */
   for (int i = 0; i < length; i++)
   {
     char c = (char)payload[i];
@@ -61,17 +59,15 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length)
   Serial.print("String via MQTT: ");
   Serial.println(msg);
 
-  if(msg.equals("L")
+  if(msg.equals("L"))
   {
     digitalWrite(PIN_LED, HIGH);
-    digitalWrite(LED_BUILTIN, HIGH);
     Serial.println("LED aceso mediante comando MQTT");
   }
   
   else if (msg.equals("D"))
   {
     digitalWrite(PIN_LED, LOW);
-    digitalWrite(LED_BUILTIN, LOW);
     Serial.println("LED apagado mediante comando MQTT");
   }
 
@@ -128,13 +124,13 @@ void reconnectWiFi(void)
   Serial.println(WiFi.localIP());
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   delay(1000);
   Serial.println("\nDisciplina IoT: acesso a nuvem via ESP32");
   delay(1000);
 
-  // programa LED interno como saida
   pinMode(PIN_LED, OUTPUT);
 
   digitalWrite(PIN_LED, HIGH);
@@ -148,7 +144,8 @@ void setup() {
   initMQTT();
 }
 
-void loop() {
+void loop()
+{
   char temperatura_str[10] = {0};
   
   VerificaConexoesWiFIeMQTT();
