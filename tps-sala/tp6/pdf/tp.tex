@@ -1,0 +1,52 @@
+\documentclass[12pt,a4paper,titlepage]{article}
+
+\usepackage{minted}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage[portuguese]{babel}
+\usepackage[colorlinks=true,allcolors=black]{hyperref}
+
+\graphicspath{ {./img/}{./../../../../../../../} }
+\newcommand{\sectionbreak}{\clearpage}
+\setminted{
+    linenos,
+    breaklines=true,
+    frame=single,
+    style=default
+}
+
+\title{Trabalho Prático VI}
+\author{
+    %\includegraphics[scale=0.85]{puc.png}
+    %\\[1.5em]
+    \\Fernando de Lima Gonçalves
+    \\Fernando Pinto de Queiroz
+    \\Henrique Augusto Figueiredo Feydit Vieira
+    \\Isabela de Oliveira Miranda
+    \\Laura Martins de Souza
+    \\Pedro de Castro Dutra Flores
+}
+\date{Belo Horizonte\\2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Atividade}
+\subsection{Descrição}
+"O projeto consiste na simulação do monitoramento do sensor de temperatura utilizado no
+trabalho 2. Através do template em Python a ser fornecido, os dados do tópico de temperatura
+do trabalho 2 deverão ser armazenados no BD local."
+
+\subsection{Desenvolvimento}
+
+\section{Códigos}
+\subsection{Microcontrolador: C/C++}
+\inputminted{arduino}{../main/main.ino}
+
+\clearpage\subsection{Banco de Dados: Python}
+\inputminted{py}{../bd.py}
+
+\section{Execução}
+
+\end{document}

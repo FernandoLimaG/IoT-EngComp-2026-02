@@ -1,0 +1,170 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZdq{}secret.h\PYGZdq{}}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}WiFi.h\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}PubSubClient.h\PYGZgt{}}
+
+\PYG{c+cm}{/* Definicoes para o MQTT */}
+\PYG{c+cp}{\PYGZsh{}define TOPICO\PYGZus{}SUBSCRIBE\PYGZus{}LED         \PYGZdq{}topico\PYGZus{}liga\PYGZus{}desliga\PYGZus{}led\PYGZdq{}}
+\PYG{c+cp}{\PYGZsh{}define TOPICO\PYGZus{}PUBLISH\PYGZus{}TEMPERATURA   \PYGZdq{}topico\PYGZus{}sensor\PYGZus{}temperatura\PYGZdq{}}
+
+\PYG{c+c1}{//id mqtt (para identificação de sessão)}
+\PYG{c+cp}{\PYGZsh{}define ID\PYGZus{}MQTT  \PYGZdq{}IoT\PYGZus{}PUC\PYGZus{}eng\PYGZus{}comp\PYGZus{}mqtt\PYGZdq{}}
+
+\PYG{c+c1}{// Global var}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{PIN\PYGZus{}LED}\PYG{+w}{ }\PYG{l+m+mi}{25}\PYG{p}{;}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}test.mosquitto.org\PYGZdq{}}\PYG{p}{;}
+\PYG{c+c1}{//const char* BROKER\PYGZus{}MQTT = \PYGZdq{}broker.emqx.io\PYGZdq{};   // broker secundario caso mosquitto down}
+\PYG{k+kr}{const}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1883}\PYG{p}{;}
+\PYG{k+kr}{long}\PYG{+w}{ }\PYG{n}{numAleatorio}\PYG{p}{;}
+
+\PYG{c+c1}{// Global objetos MQTT}
+\PYG{n+nf}{WiFiClient}\PYG{+w}{ }\PYG{n}{espClient}\PYG{p}{;}
+\PYG{n}{PubSubClient}\PYG{+w}{ }\PYG{n+nf}{MQTT}\PYG{p}{(}\PYG{n}{espClient}\PYG{p}{);}
+
+\PYG{c+cm}{/* Metodos */}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{initWiFi}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{);}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{initMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{);}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{mqtt\PYGZus{}callback}\PYG{p}{(}\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{topic}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{byte}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{payload}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{unsigned}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{);}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{reconnectMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{);}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{reconnectWiFi}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{);}
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{VerificaConexoesWiFIeMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{);}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{initWiFi}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}Conexao WI\PYGZhy{}FI\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Conectando\PYGZhy{}se na rede: \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n+nf}{SSID}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Aguarde\PYGZdq{}}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{n}{reconnectWiFi}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{initMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setServer}\PYG{p}{(}\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BROKER\PYGZus{}PORT}\PYG{p}{);}\PYG{+w}{   }\PYG{c+c1}{//informa qual broker e porta deve ser conectado}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{setCallback}\PYG{p}{(}\PYG{n}{mqtt\PYGZus{}callback}\PYG{p}{);}\PYG{+w}{            }\PYG{c+c1}{//atribui função de callback}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{mqtt\PYGZus{}callback}\PYG{p}{(}\PYG{k+kr}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{topic}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{byte}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{payload}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{unsigned}\PYG{+w}{ }\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k+kr}{String}\PYG{+w}{ }\PYG{n}{msg}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{c+cm}{/* obtem a string do payload recebido */}
+\PYG{+w}{  }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kr}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kr}{char}\PYG{+w}{ }\PYG{n}{c}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kr}{char}\PYG{p}{)}\PYG{n}{payload}\PYG{p}{[}\PYG{n}{i}\PYG{p}{];}
+\PYG{+w}{    }\PYG{n}{msg}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{;}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}String via MQTT: \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n}{msg}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{k}{if}\PYG{p}{(}\PYG{n}{msg}\PYG{p}{.}\PYG{n}{equals}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}L\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{k+kr}{LED\PYGZus{}BUILTIN}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LED aceso mediante comando MQTT\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }
+\PYG{+w}{  }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{msg}\PYG{p}{.}\PYG{n}{equals}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}D\PYGZdq{}}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{LOW}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{k+kr}{LED\PYGZus{}BUILTIN}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{LOW}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}LED apagado mediante comando MQTT\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{k}{else}\PYG{+w}{ }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Não identificou comando MQTT\PYGZdq{}}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{reconnectMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{MQTT}\PYG{p}{.}\PYG{n+nf}{connected}\PYG{p}{())}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}* Tentando se conectar ao Broker MQTT: \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n}{BROKER\PYGZus{}MQTT}\PYG{p}{);}
+
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{MQTT}\PYG{p}{.}\PYG{n+nf}{connect}\PYG{p}{(}\PYG{n}{ID\PYGZus{}MQTT}\PYG{p}{))}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Conectado com sucesso ao broker MQTT!\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{subscribe}\PYG{p}{(}\PYG{n}{TOPICO\PYGZus{}SUBSCRIBE\PYGZus{}LED}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{k}{else}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Falha ao reconectar no broker.\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Havera nova tentativa de conexao em 2s\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{2000}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}\PYG{+w}{  }
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{VerificaConexoesWiFIeMQTT}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{MQTT}\PYG{p}{.}\PYG{n+nf}{connected}\PYG{p}{())}
+\PYG{+w}{    }\PYG{n}{reconnectMQTT}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{//se não há conexão com o Broker, a conexão é refeita}
+
+\PYG{+w}{  }\PYG{n}{reconnectWiFi}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{//se não há conexão com o WiFI, a conexão é refeita}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nf}{reconnectWiFi}\PYG{p}{(}\PYG{k+kr}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{WiFi}\PYG{p}{.}\PYG{n}{status}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{WL\PYGZus{}CONNECTED}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{n+nf}{WiFi}\PYG{p}{.}\PYG{n+nf}{begin}\PYG{p}{(}\PYG{n+nf}{SSID}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{PASSWORD}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// Conectar WI\PYGZhy{}FI}
+
+\PYG{+w}{  }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{WiFi}\PYG{p}{.}\PYG{n}{status}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{WL\PYGZus{}CONNECTED}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{100}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}.\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Conectado com sucesso na rede \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{print}\PYG{p}{(}\PYG{n+nf}{SSID}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{IP obtido: \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{n+nf}{WiFi}\PYG{p}{.}\PYG{n+nf}{localIP}\PYG{p}{());}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{setup}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{begin}\PYG{p}{(}\PYG{l+m+mi}{9600}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{Serial}\PYG{p}{.}\PYG{n+nf}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{Disciplina IoT: acesso a nuvem via ESP32\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{c+c1}{// programa LED interno como saida}
+\PYG{+w}{  }\PYG{n+nf}{pinMode}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{OUTPUT}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{HIGH}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n+nf}{digitalWrite}\PYG{p}{(}\PYG{n}{PIN\PYGZus{}LED}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{LOW}\PYG{p}{);}
+\PYG{+w}{  }
+\PYG{+w}{  }\PYG{c+c1}{// GERANDO TEMPERATURA COMO UM NÚMERO ALEATÓRIO}
+\PYG{+w}{  }\PYG{n+nf}{randomSeed}\PYG{p}{(}\PYG{n+nf}{analogRead}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{));}
+
+\PYG{+w}{  }\PYG{n}{initWiFi}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n}{initMQTT}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{void}\PYG{+w}{ }\PYG{n+nb}{loop}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k+kr}{char}\PYG{+w}{ }\PYG{n}{temperatura\PYGZus{}str}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{l+m+mi}{0}\PYG{p}{\PYGZcb{};}
+\PYG{+w}{  }
+\PYG{+w}{  }\PYG{n}{VerificaConexoesWiFIeMQTT}\PYG{p}{();}
+
+\PYG{+w}{  }\PYG{c+c1}{// valor aleatorio entre 10 e 100}
+\PYG{+w}{  }\PYG{n}{numAleatorio}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{random}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{101}\PYG{p}{);}
+\PYG{+w}{  }
+\PYG{+w}{  }\PYG{c+c1}{// formata a temperatura como string}
+\PYG{+w}{  }\PYG{n}{sprintf}\PYG{p}{(}\PYG{n}{temperatura\PYGZus{}str}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZpc{}dC\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{numAleatorio}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{c+cm}{/*  Publica a temperatura */}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n}{publish}\PYG{p}{(}\PYG{n}{TOPICO\PYGZus{}PUBLISH\PYGZus{}TEMPERATURA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{temperatura\PYGZus{}str}\PYG{p}{);}
+\PYG{+w}{  }
+\PYG{+w}{  }\PYG{c+cm}{/* keep\PYGZhy{}alive da comunicação com broker MQTT */}
+\PYG{+w}{  }\PYG{n}{MQTT}\PYG{p}{.}\PYG{n+nb}{loop}\PYG{p}{();}
+\PYG{+w}{  }\PYG{n+nf}{delay}\PYG{p}{(}\PYG{l+m+mi}{2000}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}
